@@ -1,4 +1,4 @@
-import cssText from "data-text:~style.css"
+import cssText from "data-text:~/css/tailwind.css"
 import type { PlasmoCSConfig } from "plasmo"
 
 import { CountButton } from "features/count-button"

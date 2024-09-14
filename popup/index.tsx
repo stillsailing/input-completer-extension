@@ -1,6 +1,6 @@
-import { CountButton } from "~features/count-button"
+import { CountButton } from "~/features/count-button"
 
-import "~style.css"
+import "~/css/tailwind.css"
 
 function IndexPopup() {
   return (
