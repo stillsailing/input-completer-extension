@@ -1,5 +1,7 @@
 import cssText from "data-text:~/css/tailwind.css";
 import type { PlasmoCSConfig } from "plasmo";
+import { useEffect } from "react";
+import { sendToBackground } from '@plasmohq/messaging';
 
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"]
@@ -11,39 +13,60 @@ export const getStyle = () => {
   return style
 }
 
-let activeElement: HTMLInputElement | HTMLTextAreaElement
+let latestInput: HTMLInputElement | HTMLTextAreaElement
 
 document.addEventListener("focusin", (event: any) => {
   if (
     event.target.tagName.toLowerCase() === "input" ||
     event.target.tagName.toLowerCase() === "textarea"
   ) {
-    activeElement = event.target
+    latestInput = event.target
   }
 })
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.name === "reactivateInput" && activeElement) {
-    activeElement.focus()
+  if (request.name === "reactivateInput" && latestInput) {
+    latestInput.focus()
     // activeElement.style.outline = 'solid 2px #0000ff'
     // activeElement.style.outlineOffset = '2px'
   }
 
   if (request.name === 'complete') {
     const content = request.body.payload
-    if (activeElement) {
-      activeElement.value += content
-      activeElement.dispatchEvent(new Event('input'))
+    if (latestInput) {
+      latestInput.value += content
+      latestInput.dispatchEvent(new Event('input'))
     }
   }
   
 })
 
+function watchHotkeys(event: KeyboardEvent) {
+  const isCmdOrCtrl = event.metaKey || event.ctrlKey;
+  const isShift = event.shiftKey;
+  const isC = event.key === 'c' || event.key === 'C';
+
+  if (isCmdOrCtrl && isShift && isC) {
+    sendToBackground({
+      name: "open-popup",
+      body: {
+        type: "open-popup"
+      }
+    })
+    event.preventDefault()
+  }
+}
+
 const Content = () => {
-  return (
-    <div className="hidden">
-    </div>
-  )
+
+  useEffect(() => {
+    document.addEventListener('keydown', watchHotkeys)
+    return () => {
+      document.removeEventListener('keydown', watchHotkeys)
+    }
+  }, [])
+
+  return <div id="input-complete-extension" className="hidden"></div>
 }
 
 export default Content
