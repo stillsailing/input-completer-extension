@@ -13,6 +13,12 @@ function OptionsIndex() {
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
 
+  const reset = () => {
+    setAddMode(false)
+    setTitle("")
+    setContent("")
+  }
+
   return (
     <div className="mx-auto max-w-5xl pt-6 px-4">
       <h1>
@@ -39,7 +45,7 @@ function OptionsIndex() {
                 </label>
               </th>
               <th>备注</th>
-              <th>补全文字</th>
+              <th>补全文本</th>
               <th>操作</th>
             </tr>
           </thead>
@@ -67,14 +73,16 @@ function OptionsIndex() {
                 <td></td>
                 <td>
                   <input
+                    placeholder="请输入备注"
                     className="input input-bordered input-sm w-full max-w-xs"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                   />
                 </td>
                 <td>
-                  <input
-                    className="input input-bordered input-sm w-full max-w-xs"
+                  <textarea
+                    placeholder="请输入补全文本"
+                    className="textarea textarea-bordered textarea-sm w-full max-w-xs"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                   />
@@ -88,11 +96,14 @@ function OptionsIndex() {
                         title,
                         completeText: content
                       })
-                      setAddMode(false)
-                      setTitle("")
-                      setContent("")
+                      reset()
                     }}>
                     确定
+                  </button>
+                  <button
+                    className="btn btn-link p-0 my-0 ml-4"
+                    onClick={reset}>
+                    取消
                   </button>
                 </td>
               </tr>
