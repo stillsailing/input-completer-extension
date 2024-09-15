@@ -1,7 +1,11 @@
-import cssText from "data-text:~/css/tailwind.css";
-import type { PlasmoCSConfig } from "plasmo";
-import { useEffect } from "react";
-import { sendToBackground } from '@plasmohq/messaging';
+import cssText from "data-text:~/css/tailwind.css"
+import type { PlasmoCSConfig } from "plasmo"
+import { useEffect } from "react"
+
+import { sendToBackground } from "@plasmohq/messaging"
+import type { PlasmoMessaging } from "@plasmohq/messaging"
+
+const sendToTabBackground = sendToBackground as PlasmoMessaging.SendFx<string>
 
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"]
@@ -31,23 +35,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // activeElement.style.outlineOffset = '2px'
   }
 
-  if (request.name === 'complete') {
+  if (request.name === "complete") {
     const content = request.body.payload
     if (latestInput) {
       latestInput.value += content
-      latestInput.dispatchEvent(new Event('input'))
+      latestInput.dispatchEvent(new Event("input"))
     }
   }
-  
 })
 
 function watchHotkeys(event: KeyboardEvent) {
-  const isCmdOrCtrl = event.metaKey || event.ctrlKey;
-  const isShift = event.shiftKey;
-  const isC = event.key === 'c' || event.key === 'C';
+  const isCmdOrCtrl = event.metaKey || event.ctrlKey
+  const isShift = event.shiftKey
+  const isC = event.key === "k" || event.key === "K"
 
   if (isCmdOrCtrl && isShift && isC) {
-    sendToBackground({
+    sendToTabBackground({
       name: "open-popup",
       body: {
         type: "open-popup"
@@ -58,11 +61,10 @@ function watchHotkeys(event: KeyboardEvent) {
 }
 
 const Content = () => {
-
   useEffect(() => {
-    document.addEventListener('keydown', watchHotkeys)
+    document.addEventListener("keydown", watchHotkeys)
     return () => {
-      document.removeEventListener('keydown', watchHotkeys)
+      document.removeEventListener("keydown", watchHotkeys)
     }
   }, [])
 

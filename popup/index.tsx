@@ -1,6 +1,9 @@
-import "~/css/tailwind.css";
+import "~/css/tailwind.css"
+import "~/css/base.css"
 
 import { sendToContentScript } from "@plasmohq/messaging"
+
+import Header from "./Header"
 
 function sendToMainTabContent(type: string, payload?: any) {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -9,7 +12,7 @@ function sendToMainTabContent(type: string, payload?: any) {
       name: type,
       body: {
         type,
-        payload,
+        payload
       }
     })
   })
@@ -21,15 +24,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function IndexPopup() {
   return (
-    <div className="flex items-center justify-center h-96 w-96">
-      <div className="">
+    <div>
+      <Header />
+      <main className="flex items-center justify-center h-96 w-96">
         <table className="table">
           <thead>
             <tr>
               <th></th>
               <th>Name</th>
               <th>Job</th>
-              <th>Action</th>
+              <th>Action A</th>
             </tr>
           </thead>
           <tbody>
@@ -38,7 +42,11 @@ function IndexPopup() {
               <td>Cy Ganderton</td>
               <td>Quality</td>
               <td>
-                <button className="btn-link" onClick={() => sendToMainTabContent('complete', 'first')}>add</button>
+                <button
+                  className="btn btn-link"
+                  onClick={() => sendToMainTabContent("complete", "first")}>
+                  add
+                </button>
               </td>
             </tr>
             <tr>
@@ -46,12 +54,16 @@ function IndexPopup() {
               <td>Hart Hagerty</td>
               <td>Desktop</td>
               <td>
-                <button className="btn-link" onClick={() => sendToMainTabContent('complete', 'second')}>add</button>
+                <button
+                  className="btn btn-link"
+                  onClick={() => sendToMainTabContent("complete", "second")}>
+                  add
+                </button>
               </td>
             </tr>
           </tbody>
         </table>
-      </div>
+      </main>
     </div>
   )
 }
