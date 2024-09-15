@@ -3,6 +3,8 @@ import "~/css/base.css"
 
 import { sendToContentScript } from "@plasmohq/messaging"
 
+import { useListStore } from "~/store/list"
+
 import Header from "./Header"
 
 function sendToMainTabContent(type: string, payload?: any) {
@@ -23,46 +25,24 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 function IndexPopup() {
+  const store = useListStore()
+
   return (
-    <div>
+    <div className="h-96 w-96">
       <Header />
-      <main className="flex items-center justify-center h-96 w-96">
-        <table className="table">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Name</th>
-              <th>Job</th>
-              <th>Action A</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th>1</th>
-              <td>Cy Ganderton</td>
-              <td>Quality</td>
-              <td>
-                <button
-                  className="btn btn-link"
-                  onClick={() => sendToMainTabContent("complete", "first")}>
-                  add
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <th>2</th>
-              <td>Hart Hagerty</td>
-              <td>Desktop</td>
-              <td>
-                <button
-                  className="btn btn-link"
-                  onClick={() => sendToMainTabContent("complete", "second")}>
-                  add
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <main className="p-4">
+        <ul className="">
+          {store.list.map((item) => (
+            <li
+              key={item.id}
+              className="hover:bg-gray-100 cursor-pointer p-2 rounded"
+              onClick={() =>
+                sendToMainTabContent("complete", item.completeText)
+              }>
+              {item.completeText}
+            </li>
+          ))}
+        </ul>
       </main>
     </div>
   )

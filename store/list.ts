@@ -3,7 +3,7 @@ import { persist, type PersistStorage } from "zustand/middleware"
 
 import { Storage } from "@plasmohq/storage"
 
-export const storage = new Storage({ area: "sync" })
+const storage = new Storage({ area: "sync" })
 
 const storageAdaptor = {
   getItem: async (name: string) => {
