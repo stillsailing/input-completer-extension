@@ -1,48 +1,37 @@
 import "~/css/tailwind.css"
 import "~/css/base.css"
 
-import { sendToContentScript } from "@plasmohq/messaging"
+import { sendToMainTabContent } from "~/util/send"
 
-import { useListStore } from "~/store/list"
-
+import AsyncComplete from "./AsyncComplete"
 import Header from "./Header"
-
-function sendToMainTabContent(type: string, payload?: any) {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    sendToContentScript({
-      tabId: tabs[0].id,
-      name: type,
-      body: {
-        type,
-        payload
-      }
-    })
-  })
-}
+import SyncComplete from "./SyncComplete"
 
 document.addEventListener("DOMContentLoaded", () => {
   sendToMainTabContent("reactivateInput")
 })
 
 function IndexPopup() {
-  const store = useListStore()
-
   return (
-    <div className="h-96 w-96">
+    <div className="h-96 w-96 text-sm">
       <Header />
       <main className="p-4">
-        <ul className="">
-          {store.list.map((item) => (
-            <li
-              key={item.id}
-              className="hover:bg-gray-100 cursor-pointer p-2 rounded"
-              onClick={() =>
-                sendToMainTabContent("complete", item.completeText)
-              }>
-              {item.completeText}
-            </li>
-          ))}
-        </ul>
+        <div className="space-y-2">
+          <div className="collapse collapse-arrow bg-base-200">
+            <input type="radio" name="complete-accordion" defaultChecked />
+            <div className="collapse-title font-bold">同步补全</div>
+            <div className="collapse-content">
+              <SyncComplete />
+            </div>
+          </div>
+          <div className="collapse collapse-arrow bg-base-200">
+            <input type="radio" name="complete-accordion" />
+            <div className="collapse-title font-bold">异步补全</div>
+            <div className="collapse-content">
+              <AsyncComplete />
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   )
