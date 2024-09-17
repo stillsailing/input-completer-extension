@@ -1,7 +1,4 @@
-import { sendToBackground } from "@plasmohq/messaging"
-import type { PlasmoMessaging } from "@plasmohq/messaging"
-
-const sendToTabBackground = sendToBackground as PlasmoMessaging.SendFx<string>
+import { sendToBackground } from "~/util/send"
 
 function watchHotkeys(event: KeyboardEvent) {
   const isCmdOrCtrl = event.metaKey || event.ctrlKey
@@ -9,7 +6,7 @@ function watchHotkeys(event: KeyboardEvent) {
   const isC = event.key === "k" || event.key === "K"
 
   if (isCmdOrCtrl && isShift && isC) {
-    sendToTabBackground({
+    sendToBackground({
       name: "open-popup",
       body: {
         type: "open-popup"
@@ -25,7 +22,7 @@ export default function watch() {
   function watchInputValue() {
     if (latestInput) {
       const value = latestInput.value
-      sendToTabBackground({
+      sendToBackground({
         name: "input-value",
         body: {
           type: "input-value",
@@ -54,6 +51,7 @@ export default function watch() {
       if (latestInput) {
         latestInput.value += content
         latestInput.dispatchEvent(new Event("input"))
+        latestInput.dispatchEvent(new Event("change"))
       }
     }
   })

@@ -1,4 +1,8 @@
-import { sendToContentScript } from "@plasmohq/messaging"
+import {
+  sendToContentScript,
+  sendToBackground as sendToExtensionBackground
+} from "@plasmohq/messaging"
+import type { PlasmoMessaging } from "@plasmohq/messaging"
 
 export function sendToMainTabContent(type: string, payload?: any) {
   return new Promise<void>((resolve) => {
@@ -10,8 +14,10 @@ export function sendToMainTabContent(type: string, payload?: any) {
           type,
           payload
         }
-      })
-      resolve()
+      }).then(() => resolve())
     })
   })
 }
+
+export const sendToBackground =
+  sendToExtensionBackground as PlasmoMessaging.SendFx<string>

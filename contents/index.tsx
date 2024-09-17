@@ -1,6 +1,5 @@
 import cssText from "data-text:~/css/tailwind.css"
 import type { PlasmoCSConfig } from "plasmo"
-import { useEffect } from "react"
 
 import watch from "./watch"
 
@@ -14,9 +13,9 @@ export const getStyle = () => {
   return style
 }
 
-const Content = () => {
-  useEffect(() => watch(), [])
+watch()
 
+const Content = () => {
   return <div id="input-complete-extension" className="hidden"></div>
 }
 

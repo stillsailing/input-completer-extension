@@ -9,6 +9,7 @@ export default function AsyncComplete() {
       setTimeout(() => {
         sendToMainTabContent("complete", text)
         resolve()
+        window.close()
       }, 3000)
     })
   })
