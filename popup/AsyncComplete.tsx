@@ -1,27 +1,35 @@
-import { useListStore } from "~/store/list"
-import { sendToMainTabContent } from "~/util/send"
-import useFetcher from "~/util/useFetcher"
+import { useState } from "react"
+
+import { sendToBackground, sendToMainTabContent } from "~/util/send"
+
+import completers from "./completers"
 
 export default function AsyncComplete() {
-  const store = useListStore()
-  const { loading, fetch } = useFetcher((text: string) => {
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        sendToMainTabContent("complete", text)
-        resolve()
-        window.close()
-      }, 3000)
-    })
-  })
+  const [loading, setLoading] = useState(false)
 
   return (
     <ul>
-      {store.list.map((item) => (
+      {completers.map((item) => (
         <li
           key={item.id}
           className="hover:bg-gray-100 cursor-pointer p-2 rounded"
-          onClick={() => fetch("async complete text")}>
-          {item.completeText}
+          onClick={async () => {
+            setLoading(true)
+            try {
+              const resp = await sendToBackground({
+                name: "get_input_value",
+                body: {
+                  type: "get_input_value"
+                }
+              })
+              const completeText = await item.getCompleteText(resp)
+              sendToMainTabContent("complete", completeText)
+            } catch (error) {
+            } finally {
+              setLoading(false)
+            }
+          }}>
+          {item.title}
         </li>
       ))}
       {loading && (
