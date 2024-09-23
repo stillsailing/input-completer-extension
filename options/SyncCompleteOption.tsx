@@ -1,10 +1,11 @@
 import { useState } from "react"
 
-import { useListStore } from "~/store/list"
+import { useSyncCompleteListStore } from "~/store/sync"
 import uuid from "~/util/uuid"
 
 export default function SyncCompleteOption() {
-  const store = useListStore()
+  const { list, add, remove } = useSyncCompleteListStore()
+  const hasValue = list?.length > 0
 
   const [addMode, setAddMode] = useState(false)
   const [title, setTitle] = useState("")
@@ -16,8 +17,8 @@ export default function SyncCompleteOption() {
     setContent("")
   }
 
-  const allIds = store.list.map((o) => o.id)
-  const [checked, setChecked] = useState<string[]>([])
+  const allIds = list.map((o) => o.id)
+  const [selected, setSelected] = useState<string[]>([])
 
   return (
     <>
@@ -27,7 +28,10 @@ export default function SyncCompleteOption() {
           onClick={() => setAddMode(true)}>
           新增
         </button>
-        <button className="btn btn-sm ml-2" onClick={() => {}}>
+        <button
+          className="btn btn-sm ml-2"
+          disabled={selected.length === 0}
+          onClick={() => selected.forEach((id) => remove(id))}>
           删除
         </button>
       </div>
@@ -40,9 +44,13 @@ export default function SyncCompleteOption() {
                   <input
                     type="checkbox"
                     className="checkbox"
-                    value={`${checked === allIds}`}
+                    checked={
+                      selected.length === allIds.length && selected.length !== 0
+                    }
                     onChange={() =>
-                      setChecked(checked.join() === allIds.join() ? [] : allIds)
+                      setSelected(
+                        selected.length === allIds.length ? [] : allIds
+                      )
                     }
                   />
                 </label>
@@ -53,37 +61,47 @@ export default function SyncCompleteOption() {
             </tr>
           </thead>
           <tbody>
-            {store.list.map((item) => (
-              <tr key={item.id} className="hover">
-                <td>
-                  <label>
-                    <input
-                      type="checkbox"
-                      className="checkbox"
-                      value={`${checked.includes(item.id)}`}
-                      onChange={() =>
-                        setChecked((checked) =>
-                          checked.includes(item.id)
-                            ? checked.filter((o) => o !== item.id)
-                            : [...checked, item.id]
-                        )
-                      }
-                    />
-                  </label>
-                </td>
-                <td>{item.title}</td>
-                <td>
-                  <pre>{item.completeText}</pre>
-                </td>
-                <td>
-                  <button
-                    className="btn btn-link p-0 my-0"
-                    onClick={() => store.remove(item.id)}>
-                    删除
-                  </button>
+            {!hasValue && !addMode && (
+              <tr>
+                <td
+                  colSpan={4}
+                  className="text-gray-500 text-sm p-4 text-center">
+                  <span>暂无数据</span>
                 </td>
               </tr>
-            ))}
+            )}
+            {hasValue &&
+              list.map((item) => (
+                <tr key={item.id} className="hover">
+                  <td>
+                    <label>
+                      <input
+                        type="checkbox"
+                        className="checkbox"
+                        checked={selected.includes(item.id)}
+                        onChange={() =>
+                          setSelected((selectedchecked) =>
+                            selected.includes(item.id)
+                              ? selected.filter((o) => o !== item.id)
+                              : [...selected, item.id]
+                          )
+                        }
+                      />
+                    </label>
+                  </td>
+                  <td>{item.title}</td>
+                  <td>
+                    <pre>{item.completeText}</pre>
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-link p-0 my-0"
+                      onClick={() => remove(item.id)}>
+                      删除
+                    </button>
+                  </td>
+                </tr>
+              ))}
             {addMode && (
               <tr>
                 <td></td>
@@ -107,12 +125,14 @@ export default function SyncCompleteOption() {
                   <button
                     className="btn btn-link p-0 my-0"
                     onClick={() => {
-                      store.add({
-                        id: uuid(),
-                        title,
-                        completeText: content
-                      })
-                      reset()
+                      if (title && content) {
+                        add({
+                          id: uuid(),
+                          title,
+                          completeText: content
+                        })
+                        reset()
+                      }
                     }}>
                     确定
                   </button>

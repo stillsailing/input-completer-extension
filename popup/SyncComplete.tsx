@@ -1,8 +1,8 @@
-import { useListStore } from "~/store/list"
+import { useSyncCompleteListStore } from "~/store/sync"
 import { sendToMainTabContent } from "~/util/send"
 
 export default function SyncComplete() {
-  const store = useListStore()
+  const store = useSyncCompleteListStore()
   return (
     <ul>
       {store.list.map((item) => (

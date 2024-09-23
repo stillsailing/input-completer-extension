@@ -1,20 +1,18 @@
 import { create } from "zustand"
 import { persist, type PersistStorage } from "zustand/middleware"
 
-import { Storage } from "@plasmohq/storage"
-
-const storage = new Storage({ area: "sync" })
+import { syncStorage } from "."
 
 const storageAdaptor = {
   getItem: async (name: string) => {
-    const result = await storage.get<string>(name)
+    const result = await syncStorage.get<string>(name)
     return result ?? null
   },
   setItem: async (name: string, value: string) => {
-    await storage.set(name, value)
+    await syncStorage.set(name, value)
   },
   removeItem: async (name: string) => {
-    await storage.remove(name)
+    await syncStorage.remove(name)
   }
 }
 
@@ -30,9 +28,9 @@ interface Store {
   remove: (id: string) => void
 }
 
-export const useListStore = create(
+export const useSyncCompleteListStore = create(
   persist<Store>(
-    (set, get) => ({
+    (set) => ({
       list: [],
       add: (item: Item, index?: number) => {
         if (index === undefined) {
