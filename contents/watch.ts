@@ -47,11 +47,16 @@ export default function watch() {
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.name === "complete") {
-      const content = request.body.payload
+      const { mode, completeText } = request.body.payload
       if (latestInput) {
-        latestInput.value += content
-        latestInput.dispatchEvent(new Event("input"))
-        latestInput.dispatchEvent(new Event("change"))
+        if (mode === "append") {
+          latestInput.value += completeText
+        }
+        if (mode === "replace") {
+          latestInput.value = completeText
+        }
+        const event = new Event("input", { bubbles: true, cancelable: true })
+        latestInput.dispatchEvent(event)
       }
     }
   })

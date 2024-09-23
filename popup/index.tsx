@@ -13,24 +13,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function IndexPopup() {
   return (
-    <div className="h-96 w-96 text-sm">
+    <div className="min-h-96 max-h-[720px] w-[560px] text-sm font-sans">
       <Header />
-      <main className="p-4">
-        <div className="space-y-2">
-          <div className="collapse collapse-arrow bg-base-200">
-            <input type="radio" name="complete-accordion" defaultChecked />
-            <div className="collapse-title font-bold">同步补全</div>
-            <div className="collapse-content">
-              <SyncComplete />
-            </div>
-          </div>
-          <div className="collapse collapse-arrow bg-base-200">
-            <input type="radio" name="complete-accordion" />
-            <div className="collapse-title font-bold">异步补全</div>
-            <div className="collapse-content">
-              <AsyncComplete />
-            </div>
-          </div>
+      <main className="p-2">
+        <div className="space-y-2 divide-y">
+          <ul className="divide-y">
+            <SyncComplete />
+            <AsyncComplete />
+          </ul>
         </div>
       </main>
     </div>

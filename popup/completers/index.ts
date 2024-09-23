@@ -1,7 +1,7 @@
 import fetchDemo1 from "./demo1"
 import fetchDemo2 from "./demo2"
 
-interface AsyncCompleter {
+export interface AsyncCompleter {
   id: string
   title: string
   getCompleteText: (input?: string) => Promise<string>

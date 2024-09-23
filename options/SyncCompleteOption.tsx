@@ -44,9 +44,7 @@ export default function SyncCompleteOption() {
                   <input
                     type="checkbox"
                     className="checkbox"
-                    checked={
-                      selected.length === allIds.length && selected.length !== 0
-                    }
+                    checked={selected.length === allIds.length}
                     onChange={() =>
                       setSelected(
                         selected.length === allIds.length ? [] : allIds
