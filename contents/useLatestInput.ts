@@ -30,7 +30,7 @@ export default function useLatestInput() {
   }, [])
 
   return {
-    input: ref.current,
+    inputRef: ref,
     actived
   }
 }
